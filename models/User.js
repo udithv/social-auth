@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const mf = require('mongoose-friends');
+const friendsPlugin = require('mongoose-friends-plugin');
 
 
 const UserSchema = mongoose.Schema({
@@ -24,6 +25,7 @@ const UserSchema = mongoose.Schema({
 
 // optionally specify a name for the path (default is "friends")
 UserSchema.plugin(mf({pathName: "associates"}));
+UserSchema.plugin(friendsPlugin({pathName: "associates"}));
 
 
 
@@ -47,11 +49,14 @@ module.exports.addUser = function(newUser, callback){
 }
 
 module.exports.sendRequest = function(uid1, uid2, callback){
-	User.requestFriend(uid1, uid2, callback);
+	return User.requestFriend(uid1, uid2);
 }
 
 module.exports.acceptRequest = function(fid1, fid2, callback){
-	console.log('in acceptRequest');
-	User.requestFriend(fid1, fid2, callback);
+
+	return User.requestFriend(fid1, fid2);
 }
 
+module.exports.unfriend = function(uid1, uid2, callback){
+	return User.removeFriend(uid2, uid1);
+}

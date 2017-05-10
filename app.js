@@ -18,6 +18,9 @@ const users = require('./routes/users');
 //Connect to Database
 mongoose.connect(config.database);
 
+
+mongoose.Promise = global.Promise;
+
 mongoose.connection.on('connected', () => {
 	console.log('Connected to database : '+config.database);
 });
