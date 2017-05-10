@@ -1,0 +1,24 @@
+{
+  "name": "social-network",
+  "version": "1.0.0",
+  "description": "A social network is it not obvious",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "social",
+    "network"
+  ],
+  "author": "udith",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.3",
+    "express": "^4.15.2",
+    "mongoose": "^4.9.8",
+    "mongoose-friends": "^0.2.3",
+    "mongoose-friends-plugin": "^0.7.3",
+    "morgan": "^1.8.1"
+  }
+}
