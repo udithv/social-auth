@@ -24,7 +24,7 @@ const UserSchema = mongoose.Schema({
 
 
 // optionally specify a name for the path (default is "friends")
-UserSchema.plugin(mf({pathName: "associates"}));
+
 UserSchema.plugin(friendsPlugin({pathName: "associates"}));
 
 

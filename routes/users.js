@@ -78,9 +78,11 @@ router.post('/acceptfriendrequest', (req, res, next) => {
 router.post('/getfriends', (req, res, next) => {
 	let userid = req.body.userid;
 
-	User.getFriends(userid, (err, friends) => {
+	User.getFriends(userid)
+		.then((friends) => {
 		res.json(friends);
-	});
+		},
+		(err) => console.log(err));
 });
 
 router.post('/unfriend', (req, res, next) => {
@@ -98,5 +100,43 @@ router.post('/unfriend', (req, res, next) => {
 	
 
 });
+
+
+router.post('/getacceptedfriends', (req, res, next) => {
+	let userid = req.body.userid;
+
+	
+		User.getAcceptedFriends(userid)
+		.then((friends) => {
+		res.json(friends);
+		},
+		(err) => console.log(err));
+});
+
+
+router.post('/getrequestedfriends', (req, res, next) => {
+	let userid = req.body.userid;
+
+	User.getRequestedFriends(userid)
+		.then((friends) => {
+		res.json(friends);
+		},
+		(err) => console.log(err));
+});
+
+
+router.post('/getpendingfriends', (req, res, next) => {
+	let userid = req.body.userid;
+
+	User.getPendingFriends(userid)
+		.then((friends) => {
+		res.json(friends);
+		},
+		(err) => console.log(err));
+});
+
+
+
+
 
 module.exports = router;
