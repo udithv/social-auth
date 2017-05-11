@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const mongooseFriends = require('mongoose-friends');
 const friendsPlugin = require('mongoose-friends-plugin');
 const morgan = require('morgan');
+const bcryptjs = require('bcryptjs');
+
 
 //Required variables 
 const config = require('./config/database');

@@ -5,6 +5,43 @@ const User = require('../models/User');
 router.get('/',(req, res, next) => {
 	res.send('You are in the Users page');
 });
+router.post('/authenticate', (req, res, next) => {
+	let username = req.body.username;
+	let password = req.body.password;
+
+	User.getUserByUsername(username, (err, user) => {
+		if(err) throw err;
+
+		if(!user){
+			res.json({
+				success: false,
+				msg: "User does not Exit"
+			});
+		}
+
+		User.comparePassword(password, user.password,(err, isMatch) =>{
+			if(err) throw err;
+			if(!isMatch){
+				res.json({
+					success: false,
+					msg: 'Wrong Password'
+				});
+			}else{
+				
+				res.json({
+					success: true,
+					user: {
+						    id: user._id,
+							name: user.name,
+							username: user.username,
+							email: user.email
+						}
+				});
+			}
+		});
+	});
+});
+
 
 router.post('/register',(req, res, next) => {
 	let newUser = new User({

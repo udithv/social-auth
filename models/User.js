@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const mf = require('mongoose-friends');
 const friendsPlugin = require('mongoose-friends-plugin');
+const bcryptjs = require('bcryptjs');
 
 
 const UserSchema = mongoose.Schema({
@@ -44,8 +45,22 @@ module.exports.getUserByUsername = function(username, callback){
 }
 
 module.exports.addUser = function(newUser, callback){
-	newUser.save(callback);
-	
+	bcryptjs.genSalt(10, (err,salt) => {
+			bcryptjs.hash(newUser.password, salt, (err, hash) => {
+				if(err) throw err;
+
+				newUser.password = hash;
+				newUser.save(callback);
+
+			});
+	});
+}
+
+module.exports.comparePassword = function(candidatePassword, hash, callback){
+	bcryptjs.compare(candidatePassword,hash,(err, isMatch) => {
+		if(err) throw err;
+		callback(null, isMatch);
+	});
 }
 
 module.exports.sendRequest = function(uid1, uid2, callback){
