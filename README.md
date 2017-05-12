@@ -1,0 +1,1 @@
+The social network skeleton using express, mongo and passportjs with authentication and Friend request capabilities
