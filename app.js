@@ -7,6 +7,12 @@ const mongooseFriends = require('mongoose-friends');
 const friendsPlugin = require('mongoose-friends-plugin');
 const morgan = require('morgan');
 const bcryptjs = require('bcryptjs');
+const passport = require('passport');
+const jwt = require('jsonwebtoken')
+
+
+
+
 
 
 //Required variables 
@@ -31,11 +37,17 @@ mongoose.connection.on('error', (err) => {
 	console.log('Database Error :' +err);
 });
 
-
-
-
 //Intialize Express
 const app =  express();
+
+//Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./config/passport')(passport);
+
+
+
 
 //Loading Middleware
 

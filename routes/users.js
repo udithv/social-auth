@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const User = require('../models/User');
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const config = require('../config/database');
 
 
 router.get('/',(req, res, next) => {
@@ -22,14 +25,19 @@ router.post('/authenticate', (req, res, next) => {
 		User.comparePassword(password, user.password,(err, isMatch) =>{
 			if(err) throw err;
 			if(!isMatch){
+				
 				res.json({
 					success: false,
 					msg: 'Wrong Password'
 				});
 			}else{
-				
+				const token = jwt.sign(user, config.secret, {
+					expiresIn: 604800 //1 week
+				});
+
 				res.json({
 					success: true,
+					token: 'JWT '+token,
 					user: {
 						    id: user._id,
 							name: user.name,
@@ -61,13 +69,14 @@ router.post('/register',(req, res, next) => {
 
 });
 
-router.get('/userlist', (req, res, next) => {
+router.get('/userlist', passport.authenticate('jwt',{session:false}), (req, res, next) => {
 	let usermap = [];
 	User.find({}, (err, users) => {
 		
 		usermap = users.map((user) => {
 			let u = {
 				username: user.name,
+				email: user.email,
 				_id : user._id
 			};
 			return u;
@@ -79,8 +88,8 @@ router.get('/userlist', (req, res, next) => {
 });
 
 
-router.post('/sendfriendrequest', (req, res, next) => {
-	let userid = '5912bd2acf00e40350708698';
+router.post('/sendfriendrequest', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 	let friendtobe = req.body.aid;
 	console.log(friendtobe);
 	User.sendRequest(userid, friendtobe)
@@ -95,8 +104,8 @@ router.post('/sendfriendrequest', (req, res, next) => {
 
 });
 
-router.post('/acceptfriendrequest', (req, res, next) => {
-	let userid = '5912bd64cf00e40350708699';
+router.post('/acceptfriendrequest', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 	let requester = req.body.rid;
 
 	User.acceptRequest(userid, requester)
@@ -112,8 +121,8 @@ router.post('/acceptfriendrequest', (req, res, next) => {
 });
 
 
-router.post('/getfriends', (req, res, next) => {
-	let userid = req.body.userid;
+router.get('/getfriends', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 
 	User.getFriends(userid)
 		.then((friends) => {
@@ -122,9 +131,9 @@ router.post('/getfriends', (req, res, next) => {
 		(err) => console.log(err));
 });
 
-router.post('/unfriend', (req, res, next) => {
-	let userid1 = req.body.user1;
-	let userid2 = req.body.user2;
+router.post('/unfriend', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid1 = req.user._id;
+	let userid2 = req.body.friend;
 
 
 			User.unfriend(userid1, userid2)
@@ -139,8 +148,8 @@ router.post('/unfriend', (req, res, next) => {
 });
 
 
-router.post('/getacceptedfriends', (req, res, next) => {
-	let userid = req.body.userid;
+router.get('/getacceptedfriends', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 
 	
 		User.getAcceptedFriends(userid)
@@ -151,8 +160,8 @@ router.post('/getacceptedfriends', (req, res, next) => {
 });
 
 
-router.post('/getrequestedfriends', (req, res, next) => {
-	let userid = req.body.userid;
+router.get('/getrequestedfriends', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 
 	User.getRequestedFriends(userid)
 		.then((friends) => {
@@ -162,8 +171,8 @@ router.post('/getrequestedfriends', (req, res, next) => {
 });
 
 
-router.post('/getpendingfriends', (req, res, next) => {
-	let userid = req.body.userid;
+router.get('/getpendingfriends', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let userid = req.user._id;
 
 	User.getPendingFriends(userid)
 		.then((friends) => {
@@ -173,7 +182,24 @@ router.post('/getpendingfriends', (req, res, next) => {
 });
 
 
+//Profile 
+router.get('/profile', passport.authenticate('jwt',{session:false}), (req, res, next) => {
+	let user = {
+		id: req.user._id,
+		name: req.user.name,
+		username: req.user.username,
+		email: req.user.email,
+		v: req.user.__v
+	}
+	
+	
+	res.json({
+		user: user
+	});
+	
 
+
+});
 
 
 module.exports = router;

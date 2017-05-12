@@ -1,3 +1,4 @@
 module.exports = {
-	'database':'mongodb://localhost:27017/socialnet'
+	'database':'mongodb://localhost:27017/socialnet',
+	'secret':'theowlsarenotwhattheyseem'
 }
