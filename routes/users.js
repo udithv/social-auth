@@ -77,10 +77,13 @@ router.get('/userlist', passport.authenticate('jwt',{session:false}), (req, res,
 			let u = {
 				username: user.name,
 				email: user.email,
-				_id : user._id
+				id : user._id.toString()
 			};
 			return u;
+		}).filter((user) => {
+			return user.id !== req.user._id.toString();
 		});
+		console.log(usermap);
 		res.json(usermap);
 	});
 
